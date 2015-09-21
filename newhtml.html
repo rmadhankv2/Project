@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        MADHAN
+        <div class="col-md-12">
+            <input type="file" id="file" onchange="handleFileSelect(this);"/>
+        </div><br/><br/>
+        <div>
+            <canvas id="myCanvas" width="300" height="300" style="border:1px solid #d3d3d3;">
+            </canvas>
+        </div>
+        
+        topline
+        <input type="text" id="topLine" onchange="textChangeListener(this);"/><br/><br/>
+        bottomline
+        <input type="text" id="bottomLine" onchange="textChangeListener(this);"/><br/><br/>
+        <button id="save" onclick="saveFile();">save</button>
+        <script>
+
+
+            function textChangeListener(evt) {
+                var id = evt.id;
+                var text = evt.value;
+
+                if (id === 'topLine') {
+                    window.topLine = text;
+                } else {
+                    window.bottomLine = text;
+                }
+                reDrawMeme(window.imageSrc, window.topLine, window.bottomLine);
+            }
+
+
+            function reDrawMeme(image, topLine, bottomLine) {
+                var c = document.getElementById('myCanvas');
+                var ctx = c.getContext("2d");
+                if (image !== null) {
+                    c.width = image.width;
+                    c.height = image.height;
+                    ctx.drawImage(image,0, 0,c.width,c.height);
+                    
+                    ctx.font = '30pt Impact';
+                    ctx.textAlign = 'center';
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 3;
+                    ctx.fillStyle = 'white';
+                    
+                    if(topLine != null){
+                        ctx.fillText(topLine,c.width/2,40);
+                        ctx.strokeText(topLine,c.width/2,40);
+                    }
+                    
+                    if(bottomLine != null){
+                        ctx.fillText(bottomLine,c.width/2,c.height - 10);
+                        ctx.strokeText(bottomLine,c.width/2,c.height - 10);
+                    }
+                }
+
+            }
+
+            function saveFile() {
+                window.open(document.getElementById('myCanvas').toDataURL());
+            }
+
+            function handleFileSelect(evt) {
+                var canvasWidth = 300;
+                var canvasHeight = 300;
+                var file = evt.files[0];
+                var reader = new FileReader();
+                reader.onload = function (fileObject) {
+                    var data = fileObject.target.result;
+                    var image = new Image();
+                    image.onload = function () {
+                        window.imageSrc = this;
+                        reDrawMeme(this, null, null);
+                    };
+                    image.src = data;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            
+        </script>
+
+    </body>
+</html>
